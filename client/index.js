@@ -1,56 +1,50 @@
-import {Grid} from 'ag-grid-community';
-import 'ag-grid-enterprise';
+import { Grid, AjaxStore } from "@bryntum/grid";
+import "@bryntum/grid/grid.stockholm.css";
 
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+const store = new AjaxStore({
+  readUrl: "/load",
+  autoLoad: true,
+});
 
-const gridOptions = {
-
-    rowModelType: 'serverSide',
-
-    columnDefs: [
-        {field: 'athlete'},
-        {field: 'country', rowGroup: true, hide: true},
-        {field: 'sport', rowGroup: true, hide: true},
-        {field: 'year', filter: 'number', filterParams: {newRowsAction: 'keep'}},
-        {field: 'gold', aggFunc: 'sum'},
-        {field: 'silver', aggFunc: 'sum'},
-        {field: 'bronze', aggFunc: 'sum'},
-    ],
-
-    defaultColDef: {
-        sortable: true
-    }
-
-    // debug: true,
-    // cacheBlockSize: 20,
-    // maxBlocksInCache: 3,
-    // purgeClosedRowNodes: true,
-    // maxConcurrentDatasourceRequests: 2,
-    // blockLoadDebounceMillis: 1000
-};
-
-const gridDiv = document.querySelector('#myGrid');
-new Grid(gridDiv, gridOptions);
-
-const datasource = {
-    getRows(params) {
-         console.log(JSON.stringify(params.request, null, 1));
-
-         fetch('./olympicWinners/', {
-             method: 'post',
-             body: JSON.stringify(params.request),
-             headers: {"Content-Type": "application/json; charset=utf-8"}
-         })
-         .then(httpResponse => httpResponse.json())
-         .then(response => {
-             params.successCallback(response.rows, response.lastRow);
-         })
-         .catch(error => {
-             console.error(error);
-             params.failCallback();
-         })
-    }
-};
-
-gridOptions.api.setServerSideDatasource(datasource);
+const grid = new Grid({
+  appendTo: document.body,
+  readOnly: true,
+  store,
+  columns: [
+    {
+      text: "Country",
+      field: "country",
+      width: 200,
+    },
+    {
+      text: "Sport",
+      field: "sport",
+      width: 200,
+    },
+    {
+      text: "Athlete",
+      field: "athlete",
+      width: 200,
+    },
+    {
+      text: "Year",
+      field: "year",
+      width: 50,
+    },
+    {
+      text: "Gold",
+      field: "gold",
+      width: 50,
+    },
+    {
+      text: "Silver",
+      field: "silver",
+      width: 50,
+    },
+    {
+      text: "Bronze",
+      field: "bronze",
+      width: 50,
+    },
+  ],
+});
